@@ -27,7 +27,9 @@ class UserModel extends CI_Model
         $this->db->where('firstname', $data['fname']);
         $this->db->where('middlename', $data['mname']);
         $this->db->where('lastname', $data['lname']);
+        
         $query = $this->db->get('residents');
+        
         return $query->row();
     }
 

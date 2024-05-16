@@ -164,16 +164,23 @@ class Auth extends CI_Controller
 
         $this->form_validation->set_rules('username', 'Username', 'required|min_length[5]|is_unique[users.username]');
         $this->form_validation->set_rules('fname', 'Username', 'required|trim');
-        $this->form_validation->set_rules('mname', 'Username', 'required|trim');
         $this->form_validation->set_rules('lname', 'Username', 'required|trim');
         $this->form_validation->set_rules('password', 'Password', 'required');
         $this->form_validation->set_rules('conpassword', 'Confirm Password', 'required|matches[password]');
 
         if ($this->form_validation->run() == FALSE) {
             $this->session->set_flashdata('message', validation_errors());
+
+            $this->session->set_userdata("register_fname", $this->input->post('fname'));
+            $this->session->set_userdata("register_mname", $this->input->post('mname'));
+            $this->session->set_userdata("register_lname", $this->input->post('lname'));
+            $this->session->set_userdata("register_username", $this->input->post('username'));
+            $this->session->set_userdata("register_password", $this->input->post('password'));
+            $this->session->set_userdata("register_confirm_password", $this->input->post('conpassword'));
         } else {
             $data = array(
                 'fname' => $this->input->post('fname'),
+                'mname' => $this->input->post('mname'),
                 'lname' => $this->input->post('lname'),
             );
 
@@ -181,6 +188,7 @@ class Auth extends CI_Controller
 
             if ($checkRes) {
                 $checkUser = $this->userModel->checkUser($checkRes->id);
+
                 if ($checkUser) {
                     $this->session->set_flashdata('message', 'Error! Resident already registered!');
                 } else {
@@ -198,30 +206,28 @@ class Auth extends CI_Controller
                         'avatar' =>  $checkRes->picture,
                     );
 
-                    // $insert = $this->userModel->save($userData);
+                    $insert = $this->userModel->save($userData);
 
-                    // if ($insert) {
-                    //     $log = array(
-                    //         'activity' => 'User Created: ' . $this->input->post('username'),
-                    //         'user_id' => $this->session->id,
-                    //     );
+                    if ($insert) {
+                        $log = array(
+                            'activity' => 'User Created: ' . $this->input->post('username'),
+                            'user_id' => $this->session->id,
+                        );
 
-                    //     $this->settingsModel->insert_activity($log);
+                        $this->settingsModel->insert_activity($log);
 
-                    //     $this->session->set_flashdata('success', 'success');
-                    //     $this->session->set_flashdata('message', 'Registered successfully. Please login!');
+                        $this->session->set_flashdata('success', 'success');
+                        $this->session->set_flashdata('message', 'Registered successfully. Please login!');
 
-                    //     $this->session->unset_userdata("register_fname");
-                    //     $this->session->unset_userdata("register_mname");
-                    //     $this->session->unset_userdata("register_lname");
-                    //     $this->session->unset_userdata("register_username");
-                    //     $this->session->unset_userdata("register_password");
-                    //     $this->session->unset_userdata("register_confirm_password");
-                    // } else {
-                    //     $this->session->set_flashdata('message', 'Something went wrong. Please try again!');
-                    // }
-
-                    echo json_encode($userData);
+                        $this->session->unset_userdata("register_fname");
+                        $this->session->unset_userdata("register_mname");
+                        $this->session->unset_userdata("register_lname");
+                        $this->session->unset_userdata("register_username");
+                        $this->session->unset_userdata("register_password");
+                        $this->session->unset_userdata("register_confirm_password");
+                    } else {
+                        $this->session->set_flashdata('message', 'Something went wrong. Please try again!');
+                    }
                 }
             } else {
                 $this->session->set_userdata("register_fname", $this->input->post('fname'));
@@ -235,7 +241,7 @@ class Auth extends CI_Controller
             }
         }
 
-        // redirect("client/register", 'refresh');
+        redirect("client/register", 'refresh');
     }
 
     public function createUser()
