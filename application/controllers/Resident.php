@@ -1,6 +1,24 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+/**
+ * @property settingsModel $settingsModel 
+ * @property base $base 
+ * @property officialsModel $officialsModel 
+ * @property dashboardModel $dashboardModel 
+ * @property session $session 
+ * @property residentModel $residentModel 
+ * @property servicesModel $servicesModel 
+ * @property requestModel $requestModel 
+ * @property form_validation $form_validation 
+ * @property input $input 
+ * @property userModel $userModel 
+ * @property upload $upload 
+ * @property image_lib $image_lib 
+ * @property precinctModel $precinctModel 
+ * @property purokModel $purokModel 
+*/
+
 class Resident extends CI_Controller
 {
 
